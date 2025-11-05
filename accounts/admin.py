@@ -1,14 +1,32 @@
 from django.contrib import admin
+from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from .models import User, Device
+
 
 # -----------------------------
 # Custom User Admin
 # -----------------------------
 @admin.register(User)
-class UserAdmin(admin.ModelAdmin):
+class UserAdmin(BaseUserAdmin):
     list_display = ('email', 'username', 'is_verified', 'is_staff', 'is_superuser')
     search_fields = ('email', 'username')
     readonly_fields = ('date_joined',)
+
+    ordering = ('email',)
+    fieldsets = (
+        (None, {'fields': ('email', 'password')}),
+        ('Personal info', {'fields': ('username',)}),
+        ('Permissions', {'fields': ('is_active', 'is_staff', 'is_superuser', 'is_verified')}),
+        ('Important dates', {'fields': ('date_joined',)}),
+    )
+
+    add_fieldsets = (
+        (None, {
+            'classes': ('wide',),
+            'fields': ('email', 'username', 'password1', 'password2', 'is_staff', 'is_superuser'),
+        }),
+    )
+
 
 # -----------------------------
 # Device Admin
